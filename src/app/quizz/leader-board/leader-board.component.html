@@ -1,0 +1,27 @@
+<table class="table">
+  <thead class="thead-dark">
+  <tr>
+    <th scope="col">#</th>
+    <th scope="col">username</th>
+    <th scope="col">points</th>
+    <th scope="col">city</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let user of mapped | sortPipe:'points'; index as i; first as isFirst">
+    <th [ngClass]="{'success' : isFirst}" scope="row">{{i+1}}</th>
+    <td [ngClass]="{'success' : isFirst}">{{user.displayName}}</td>
+    <td [ngClass]="{'success' : isFirst}">{{user.points}}</td>
+    <td [ngClass]="{'success' : isFirst}">{{user.city}}</td>
+  </tr>
+  </tbody>
+</table>
+
+<p class="bg-danger" *ngIf="authError">{{authError?.message}}</p>
+<p class="bg-success" *ngIf="authSuccess">{{authSuccess}}</p>
+
+
+<button *ngIf="isNotAdmin === false" type="button" class="btn btn-primary mb-2" (click)="wipeData()">
+ Wipe Data
+</button>
+

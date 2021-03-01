@@ -1,0 +1,179 @@
+
+
+<router-outlet></router-outlet>
+<div class="row justify-content-center">
+  <div class="col-12 text-center">
+   <h2 class="display-4">Quizz Page</h2>
+  </div>
+
+  <div *ngIf="userNameNotReady === true" class="col-12 d-flex justify-content-center">
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary mb-2" data-toggle="modal" data-target="#formModal">
+      START QUIZZ
+    </button>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="formModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="titleModal">We need more info!</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Enter a display name so you can start our quizz and earn points!</p>
+            <p class="bg-danger" *ngIf="authError">{{authError?.message}}</p>
+            <p class="bg-success" *ngIf="authSuccess">{{authSuccess}}</p>
+
+
+            <form #regForm="ngForm" (ngSubmit)="updateUser(regForm)">
+
+              <div class="form-group">
+                <label for="displayName" class="ml-1">Name</label>
+                <input ngModel #displayName name="displayName" type="text" class="form-control" id="displayName" placeholder="Enter name">
+              </div>
+
+              <button type="submit" class="btn btn-primary mt-3">Submit</button>
+            </form>
+
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="refresh()" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <div class="col-12 text-center pb-5">
+  <button *ngIf="userNameNotReady === false && !gameStarted" (click)="startGame()" class="btn btn-primary">Start game</button>
+  </div>
+
+
+
+  <div *ngIf="gameStarted" class="container">
+    <button #myModal [hidden]="true" data-toggle="modal" data-target="#formModal2"></button>
+    <button #myModalAddressExisits [hidden]="true" data-toggle="modal" data-target="#myModalAddressExisits"></button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModalAddressExisits" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="titelModalAddressExisits"><strong>3 IN A ROW</strong></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>The prize will be sent to your current adress!</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="formModal2" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="titleModal2"><strong>3 IN A ROW</strong></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Enter the required information so we can send you your Prize!</p>
+            <p class="bg-danger" *ngIf="authError">{{authError?.message}}</p>
+            <p class="bg-success" *ngIf="authSuccess">{{authSuccess}}</p>
+
+
+            <form #regForm2="ngForm" (ngSubmit)="updateUserStreak(regForm2)">
+
+              <div class="form-group">
+                <label for="city" class="ml-1">City</label>
+                <input ngModel #city name="city" type="text" class="form-control" id="city" placeholder="Current whereabouts, city name ">
+              </div>
+              <div class="form-group">
+                <label for="address" class="ml-1">Address</label>
+                <input ngModel #address name="address" type="text" class="form-control" id="address" placeholder="Your address">
+              </div>
+              <div class="form-group">
+                <label for="lastName" class="ml-1">Last Name</label>
+                <input ngModel #lastName name="lastName" type="text" class="form-control" id="lastName" placeholder="Your LastName">
+              </div>
+
+              <button type="submit" class="btn btn-primary mt-3">Submit</button>
+            </form>
+
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="hud">
+      <div class="hud-item">
+        <p class="hud-prefix">
+          Question
+        </p>
+        <h1 class="hud-main-text" id="questionCounter">
+          {{currentQuestionNumber}}
+        </h1>
+      </div>
+      <div class="hud-item">
+        <p class="hud-prefix">
+          Score
+        </p>
+        <h1 class="hud-main-text" id="score">
+          {{score}}
+        </h1>
+      </div>
+    </div>
+
+
+    <h2 id="question">{{currentQuestion?.question}}</h2>
+
+    <div class="choice-container" (click)="checkAnswer(selectedAnswer = 1, currentQuestion?.answer, $event)">
+      <p class="choice-prefix">A</p>
+      <p class="choice-text">{{currentQuestion?.choice1 }}</p>
+    </div>
+
+      <div class="choice-container"  (click)="checkAnswer(selectedAnswer = 2, currentQuestion?.answer,$event)">
+        <p class="choice-prefix">B</p>
+        <p class="choice-text">{{currentQuestion.choice2}}</p>
+      </div>
+      <div class="choice-container" (click)="checkAnswer(selectedAnswer =3, currentQuestion?.answer,$event)">
+        <p class="choice-prefix">C</p>
+        <p class="choice-text">{{currentQuestion?.choice3 }}</p>
+      </div>
+      <div class="choice-container" (click)="checkAnswer(selectedAnswer =4, currentQuestion?.answer,$event)">
+        <p class="choice-prefix">D</p>
+        <p class="choice-text">{{currentQuestion?.choice4}}</p>
+      </div>
+
+  </div>
+
+
+
+  </div>
+
+
+
+
+
+
+
